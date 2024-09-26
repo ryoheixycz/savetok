@@ -12,7 +12,7 @@ exports.downloadTikTokVideo = async (req, res) => {
 
   try {
     const response = await axios.post(
-      "https://ssstik.io/abc?url=dl",
+      process.env.TIKTOK_API_URL,
       new URLSearchParams({
         id: url,
         locale: "en",
@@ -100,7 +100,7 @@ exports.downloadInstagramStory = async (req, res) => {
 
   try {
     const response = await axios.get(
-      `https://snapinsta.guru/api/ig/story?url=${url}`
+      `${process.env.INSTAGRAM_STORY_API_URL}${url}`
     );
     console.log("Instagram Story API Response:", response.data); // Debug: Log API response
 
@@ -160,7 +160,7 @@ exports.downloadInstagramPost = async (req, res) => {
 
   try {
     const response = await axios.get(
-      `https://aiovideodownloader.com/api/instagram?url=${url}`
+      `${process.env.INSTAGRAM_POST_API_URL}${url}`
     );
     const result = response.data;
     let posts = [];
@@ -218,7 +218,7 @@ exports.downloadFacebookPost = async (req, res) => {
 
   try {
     const response = await axios.get(
-      `https://aiovideodownloader.com/api/facebook?url=${url}`
+      `${process.env.FACEBOOK_POST_API_URL}${url}`
     );
     const result = response.data;
 
@@ -276,7 +276,7 @@ exports.downloadYoutubePost = async (req, res) => {
     const config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "https://submagic-free-tools.fly.dev/api/youtube-info",
+      url: process.env.YOUTUBE_API_URL,
       headers: { "Content-Type": "application/json" },
       data: data,
     };
