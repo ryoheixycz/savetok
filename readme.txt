@@ -1,8 +1,8 @@
 FEATURE:
-- TIKTOK
-- INSTAGRAM
-- FACEBOOK
-- YOUTUBE
+- TIKTOK (video)
+- INSTAGRAM (image,imageslide,reels,stories)
+- FACEBOOK (reels, watch reels)
+- YOUTUBE?
+- TWITTER?
+- idk
 
-
-SAMPLE : https://www.tiktok.com/@gabagtha/video/7396668923602619653
