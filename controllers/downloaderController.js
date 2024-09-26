@@ -258,3 +258,80 @@ exports.downloadFacebookPost = async (req, res) => {
       });
   }
 };
+
+exports.downloadYoutubePost = async (req, res) => {
+  const { url } = req.query;
+
+  console.log("YouTube Post Download Request URL:", url);
+
+  if (!url) {
+    console.log("YouTube URL not provided");
+    return res
+      .status(400)
+      .json({ status: false, message: "URL YouTube diperlukan" });
+  }
+
+  try {
+    const data = JSON.stringify({ url });
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://submagic-free-tools.fly.dev/api/youtube-info",
+      headers: { "Content-Type": "application/json" },
+      data: data,
+    };
+
+    const response = await axios.request(config);
+    const result = response.data;
+
+    if (!result || !result.formats || result.formats.length === 0) {
+      console.log("No YouTube download links found");
+      return res
+        .status(404)
+        .json({ status: false, message: "Gagal menemukan tautan unduhan YouTube" });
+    }
+
+    // Filter formats for video_with_audio and m4a audio
+    const videoFormats = result.formats.filter(format => format.type === "video_with_audio");
+    const audioFormats = result.formats.filter(format => format.ext === "m4a");
+
+    // Extract URLs
+    const videoUrls = videoFormats.map(format => ({
+      formatId: format.formatId,
+      label: format.label,
+      url: format.url,
+      mimeType: format.mimeType,
+      duration: format.duration,
+    }));
+
+    const audioUrls = audioFormats.map(format => ({
+      formatId: format.formatId,
+      label: format.label,
+      url: format.url,
+      mimeType: format.mimeType,
+      duration: format.duration,
+    }));
+
+    console.log("Filtered YouTube Video Links:", videoUrls); // Debug: Log video links
+    console.log("Filtered YouTube Audio Links (m4a):", audioUrls); // Debug: Log audio links
+
+    return res.status(200).json({
+      status: true,
+      message: "Tautan unduhan YouTube ditemukan",
+      data: {
+        thumbnailUrl: result.thumbnailUrl,
+        title: result.title,
+        duration: result.duration,
+        videoUrls: videoUrls,
+        audioUrls: audioUrls,
+      },
+    });
+  } catch (error) {
+    console.error("Error downloading YouTube Post:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengunduh YouTube Post",
+      error: error.message,
+    });
+  }
+};

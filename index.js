@@ -1,11 +1,7 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const downloaderRoutes = require("./routes/downloaderRoutes");
 
 const app = express();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rute utama
 app.use("/api", downloaderRoutes);
@@ -15,7 +11,7 @@ app.get("/", (req, res) => {
     data: {
       message: "make rest-api with nodejs | express",
     },
-    endpoints: ["/api/tiktokdl", "/api/igdl", "/api/igstory", "/api/fbdl"],
+    endpoints: ["/api/tiktokdl", "/api/igdl", "/api/igstory", "/api/fbdl", "/api/ytdl"],
   });
 });
 

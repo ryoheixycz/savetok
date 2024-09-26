@@ -7,5 +7,6 @@ router.get("/tiktokdl", downloaderController.downloadTikTokVideo);
 router.get("/igdl", downloaderController.downloadInstagramPost);
 router.get("/igstory", downloaderController.downloadInstagramStory);
 router.get("/fbdl", downloaderController.downloadFacebookPost);
+router.get("/ytdl", downloaderController.downloadYoutubePost);
 
 module.exports = router;
