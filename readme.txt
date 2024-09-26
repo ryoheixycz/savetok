@@ -6,3 +6,5 @@ FEATURE:
 - TWITTER?
 - idk
 
+parameter? all parameter using 'url'
+
