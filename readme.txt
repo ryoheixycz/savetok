@@ -2,7 +2,7 @@ FEATURE:
 - TIKTOK (video)
 - INSTAGRAM (image,imageslide,reels,stories)
 - FACEBOOK (reels, watch reels)
-- YOUTUBE?
+- YOUTUBE (video, audio, webm)
 - TWITTER?
 - idk
 
