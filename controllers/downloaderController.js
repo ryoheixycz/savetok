@@ -416,3 +416,101 @@ exports.downloadTwitterPost = async (req, res) => {
     });
   }
 };
+exports.tiktokDownloaderv2 = async (req, res) => {
+  let { url } = req.query;
+
+  console.log("TikTok Video v2 Download Request URL:", url);
+
+  // Resolusi tautan pendek jika ada
+  const resolveShortUrl = async (shortUrl) => {
+    try {
+      const response = await axios.get(shortUrl, {
+        maxRedirects: 0, // Jangan mengikuti redirect
+        validateStatus: (status) => status >= 300 && status < 400, // Tangkap status redirect
+      });
+
+      const longUrl = response.headers.location; // Ambil URL tujuan dari header
+      console.log("Resolved long URL:", longUrl);
+      return longUrl;
+    } catch (error) {
+      console.error("Error resolving short URL:", error.message);
+      return null;
+    }
+  };
+
+  // Cek jika URL adalah tautan pendek (seperti yang dimulai dengan 'https://vt.tiktok.com/')
+  if (url && url.includes("vt.tiktok.com")) {
+    url = await resolveShortUrl(url); // Resolusi ke URL panjang
+  }
+
+  // Cek jika URL valid dan mengandung 'video/' untuk mengambil ID
+  if (url && url.includes("video/")) {
+    url = url.split("video/")[1].split("?")[0]; // Ambil ID setelah "video/" dan buang parameter setelah '?'
+  }
+
+  console.log("Extracted TikTok Video ID:", url);
+
+  if (!url) {
+    console.log("TikTok video URL not provided or invalid");
+    return res.status(400).json({ status: false, message: "URL TikTok tidak valid atau diperlukan" });
+  }
+
+  try {
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://api.twitterpicker.com/tiktok/mediav2?id=${url}`, // Gunakan ID video yang diekstrak
+      headers: {},
+    };
+
+    const response = await axios.request(config);
+    const {
+      user: {
+        username = "Unknown",
+        name = "Unknown",
+        image = null,
+        image_small = null,
+      } = {},
+      video_no_watermark: {
+        url: videoNoWatermarkUrl = null,
+        size_mb: videoNoWatermarkSize = null,
+        width = null,
+        height = null,
+      } = {},
+      video_watermark: { url: videoWatermarkUrl = null } = {},
+      thumbnail = null,
+      thumbnail_animated = null,
+      video_duration_seconds = null,
+      audio: {
+        url: audioUrl = null,
+        duration_seconds: audioDuration = null,
+      } = {},
+    } = response.data || {};
+
+    return res.status(200).json({
+      status: true,
+      message: "Tautan unduhan TikTok v2 ditemukan",
+      data: {
+        user: {
+          username,
+          name,
+          image,
+        },
+        video_no_watermark: {
+          url: videoNoWatermarkUrl,
+        },
+        thumbnail,
+        audio: {
+          url: audioUrl,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error downloading TikTok v2 video:", error.message);
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengunduh video TikTok v2",
+      error: error.message,
+    });
+  }
+};
