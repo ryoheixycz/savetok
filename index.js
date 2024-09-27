@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
     data: {
       message: "make rest-api with nodejs | express",
     },
-    endpoints: ["/api/tiktokdl", "/api/igdl", "/api/igstory", "/api/fbdl", "/api/ytdl","/api/twtdl"],
+    endpoints: ["/api/tiktokdl", "/api/igdl", "/api/igstory", "/api/fbdl", "/api/ytdl", "/api/twtdl", "/api/v2tiktokdl"],
   });
 });
 
