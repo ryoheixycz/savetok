@@ -47,7 +47,7 @@ exports.downloadTikTokVideo = async (req, res) => {
     const descriptionMatch = html.match(/<p class="maintext">([^<]+)<\/p>/);
     const videoDescription = descriptionMatch ? descriptionMatch[1] : null;
 
-    console.log("Download Links:", { downloadTiktokNowm, downloadTiktokMp3 }); // Debug: Log download links
+    console.log("Download Links:", { downloadTiktokNowm, downloadTiktokMp3 });
     console.log("Creator Info:", {
       creatorProfileImg,
       creatorUsername,
@@ -55,7 +55,7 @@ exports.downloadTikTokVideo = async (req, res) => {
     }); // Debug: Log creator info
 
     if (!downloadTiktokNowm && !downloadTiktokMp3) {
-      console.log("No download links found"); // Debug: Log no links found
+      console.log("No download links found");
       return res
         .status(404)
         .json({ status: false, message: "Gagal menemukan tautan unduhan" });
@@ -76,13 +76,11 @@ exports.downloadTikTokVideo = async (req, res) => {
     });
   } catch (error) {
     console.error("Error downloading TikTok video:", error);
-    return res
-      .status(500)
-      .json({
-        status: false,
-        message: "Gagal mengunduh video",
-        error: error.message,
-      });
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengunduh video",
+      error: error.message,
+    });
   }
 };
 
@@ -126,23 +124,19 @@ exports.downloadInstagramStory = async (req, res) => {
         },
       });
     } else {
-      console.log("No Instagram Story download links found"); // Debug: Log no links found
-      return res
-        .status(404)
-        .json({
-          status: false,
-          message: "Gagal menemukan tautan unduhan Instagram Story",
-        });
+      console.log("No Instagram Story download links found");
+      return res.status(404).json({
+        status: false,
+        message: "Gagal menemukan tautan unduhan Instagram Story",
+      });
     }
   } catch (error) {
     console.error("Error downloading Instagram Story:", error);
-    return res
-      .status(500)
-      .json({
-        status: false,
-        message: "Gagal mengunduh Instagram Story",
-        error: error.message,
-      });
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengunduh Instagram Story",
+      error: error.message,
+    });
   }
 };
 
@@ -178,13 +172,11 @@ exports.downloadInstagramPost = async (req, res) => {
       });
       console.log("Instagram Post Data (Single):", posts); // Debug: Log single post data
     } else {
-      console.log("No Instagram Post download links found"); // Debug: Log no links found
-      return res
-        .status(404)
-        .json({
-          status: false,
-          message: "Gagal menemukan tautan unduhan Instagram Post",
-        });
+      console.log("No Instagram Post download links found");
+      return res.status(404).json({
+        status: false,
+        message: "Gagal menemukan tautan unduhan Instagram Post",
+      });
     }
 
     return res.status(200).json({
@@ -194,13 +186,11 @@ exports.downloadInstagramPost = async (req, res) => {
     });
   } catch (error) {
     console.error("Error downloading Instagram Post:", error);
-    return res
-      .status(500)
-      .json({
-        status: false,
-        message: "Gagal mengunduh Instagram Post",
-        error: error.message,
-      });
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengunduh Instagram Post",
+      error: error.message,
+    });
   }
 };
 
@@ -223,19 +213,17 @@ exports.downloadFacebookPost = async (req, res) => {
     const result = response.data;
 
     if (!result.sd && !result.hd) {
-      console.log("No Facebook Post download links found"); // Debug: Log no links found
-      return res
-        .status(404)
-        .json({
-          status: false,
-          message: "Gagal menemukan tautan unduhan Facebook Post",
-        });
+      console.log("No Facebook Post download links found");
+      return res.status(404).json({
+        status: false,
+        message: "Gagal menemukan tautan unduhan Facebook Post",
+      });
     }
 
     console.log("Facebook Post Download Links:", {
       sdUrl: result.sd,
       hdUrl: result.hd,
-    }); // Debug: Log download links
+    });
 
     return res.status(200).json({
       status: true,
@@ -249,13 +237,11 @@ exports.downloadFacebookPost = async (req, res) => {
     });
   } catch (error) {
     console.error("Error downloading Facebook Post:", error);
-    return res
-      .status(500)
-      .json({
-        status: false,
-        message: "Gagal mengunduh Facebook Post",
-        error: error.message,
-      });
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengunduh Facebook Post",
+      error: error.message,
+    });
   }
 };
 
@@ -288,15 +274,22 @@ exports.downloadYoutubePost = async (req, res) => {
       console.log("No YouTube download links found");
       return res
         .status(404)
-        .json({ status: false, message: "Gagal menemukan tautan unduhan YouTube" });
+        .json({
+          status: false,
+          message: "Gagal menemukan tautan unduhan YouTube",
+        });
     }
 
     // Filter formats for video_with_audio and m4a audio
-    const videoFormats = result.formats.filter(format => format.type === "video_with_audio");
-    const audioFormats = result.formats.filter(format => format.ext === "m4a");
+    const videoFormats = result.formats.filter(
+      (format) => format.type === "video_with_audio"
+    );
+    const audioFormats = result.formats.filter(
+      (format) => format.ext === "m4a"
+    );
 
     // Extract URLs
-    const videoUrls = videoFormats.map(format => ({
+    const videoUrls = videoFormats.map((format) => ({
       formatId: format.formatId,
       label: format.label,
       url: format.url,
@@ -304,7 +297,7 @@ exports.downloadYoutubePost = async (req, res) => {
       duration: format.duration,
     }));
 
-    const audioUrls = audioFormats.map(format => ({
+    const audioUrls = audioFormats.map((format) => ({
       formatId: format.formatId,
       label: format.label,
       url: format.url,
@@ -312,8 +305,8 @@ exports.downloadYoutubePost = async (req, res) => {
       duration: format.duration,
     }));
 
-    console.log("Filtered YouTube Video Links:", videoUrls); // Debug: Log video links
-    console.log("Filtered YouTube Audio Links (m4a):", audioUrls); // Debug: Log audio links
+    console.log("Filtered YouTube Video Links:", videoUrls);
+    console.log("Filtered YouTube Audio Links (m4a):", audioUrls);
 
     return res.status(200).json({
       status: true,
@@ -351,11 +344,11 @@ exports.downloadTwitterPost = async (req, res) => {
   try {
     const data = { q: url };
     const config = {
-      method: 'post',
+      method: "post",
       maxBodyLength: Infinity,
       url: process.env.TWITTER_API_URL,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       data: data,
     };
@@ -367,14 +360,19 @@ exports.downloadTwitterPost = async (req, res) => {
       console.log("No Twitter download links found");
       return res
         .status(404)
-        .json({ status: false, message: "Gagal menemukan tautan unduhan Twitter" });
+        .json({
+          status: false,
+          message: "Gagal menemukan tautan unduhan Twitter",
+        });
     }
 
     // Extracting the necessary information from the HTML data
     const htmlData = result.data;
 
     // Extract the first MP4 download link
-    const downloadLinkMatch = htmlData.match(/<a[^>]*href="([^"]*)"[^>]*>.*?Download MP4\s*\(.*?\)<\/a>/);
+    const downloadLinkMatch = htmlData.match(
+      /<a[^>]*href="([^"]*)"[^>]*>.*?Download MP4\s*\(.*?\)<\/a>/
+    );
     const downloadLink = downloadLinkMatch ? downloadLinkMatch[1] : null;
 
     // Extract the thumbnail URL
