@@ -459,7 +459,7 @@ exports.tiktokDownloaderv2 = async (req, res) => {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `https://api.twitterpicker.com/tiktok/mediav2?id=${url}`, // Gunakan ID video yang diekstrak
+      url: `${process.env.TIKTOKV2_API_URL}${url}`, // Gunakan ID video yang diekstrak
       headers: {},
     };
 
