@@ -9,5 +9,7 @@ router.get("/igstory", downloaderController.downloadInstagramStory);
 router.get("/fbdl", downloaderController.downloadFacebookPost);
 router.get("/ytdl", downloaderController.downloadYoutubePost);
 router.get("/twtdl", downloaderController.downloadTwitterPost);
+router.get("/v2tiktokdl", downloaderController.tiktokDownloaderv2);
+
 
 module.exports = router;
