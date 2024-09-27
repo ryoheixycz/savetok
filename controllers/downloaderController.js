@@ -335,3 +335,86 @@ exports.downloadYoutubePost = async (req, res) => {
     });
   }
 };
+
+exports.downloadTwitterPost = async (req, res) => {
+  const { url } = req.query;
+
+  console.log("Twitter Post Download Request URL:", url);
+
+  if (!url) {
+    console.log("Twitter URL not provided");
+    return res
+      .status(400)
+      .json({ status: false, message: "URL Twitter diperlukan" });
+  }
+
+  try {
+    const data = { q: url };
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.TWITTER_API_URL,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: data,
+    };
+
+    const response = await axios.request(config);
+    const result = response.data;
+
+    if (!result || !result.data) {
+      console.log("No Twitter download links found");
+      return res
+        .status(404)
+        .json({ status: false, message: "Gagal menemukan tautan unduhan Twitter" });
+    }
+
+    // Extracting the necessary information from the HTML data
+    const htmlData = result.data;
+
+    // Extract the first MP4 download link
+    const downloadLinkMatch = htmlData.match(/<a[^>]*href="([^"]*)"[^>]*>.*?Download MP4\s*\(.*?\)<\/a>/);
+    const downloadLink = downloadLinkMatch ? downloadLinkMatch[1] : null;
+
+    // Extract the thumbnail URL
+    const thumbnailMatch = htmlData.match(/<img[^>]*src="([^"]*)"[^>]*>/);
+    const thumbnailUrl = thumbnailMatch ? thumbnailMatch[1] : null;
+
+    // Extract the video description
+    const descriptionMatch = htmlData.match(/<h3>(.*?)<\/h3>/);
+    const videoDescription = descriptionMatch ? descriptionMatch[1] : null;
+
+    // Extract the audio URL from the "Convert to MP3" link
+    const audioUrlMatch = htmlData.match(/data-audioUrl="([^"]*)"/);
+    const audioUrl = audioUrlMatch ? audioUrlMatch[1] : null;
+
+    if (!downloadLink) {
+      console.log("No MP4 download link found");
+      return res
+        .status(404)
+        .json({ status: false, message: "Gagal menemukan tautan unduhan MP4" });
+    }
+
+    console.log("Filtered Twitter Video Download Link:", downloadLink);
+    console.log("Video Description:", videoDescription);
+
+    return res.status(200).json({
+      status: true,
+      message: "Tautan unduhan Twitter ditemukan",
+      data: {
+        vidUrl: downloadLink,
+        vidDescription: videoDescription,
+        audioUrl: audioUrl,
+        thumbnailUrl: thumbnailUrl,
+      },
+    });
+  } catch (error) {
+    console.error("Error downloading Twitter Post:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengunduh Twitter Post",
+      error: error.message,
+    });
+  }
+};
